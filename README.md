@@ -9,6 +9,8 @@ from the project folder and keeps both out of git.
 
 ## For the teammate
 
+Plain-language guide to the whole workflow: https://claude.ai/code/artifact/3abc4155-7d3b-4c7b-a63a-1b3c54675797
+
 1. Open Terminal (press Cmd+Space, type `Terminal`, press Enter).
 2. Paste this line and press Enter:
 
