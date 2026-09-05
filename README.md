@@ -36,6 +36,7 @@ and offers to open a pull request when you say you are done.
 - Writes `~/Persn8/.env` from `.env.example` with the API keys you type in.
 - Writes `~/Persn8/CLAUDE.local.md` and `~/Persn8/.claude/settings.local.json`
   from `templates/` and excludes both from git.
+- Installs the skills in `skills/` to `~/.claude/skills/` (user level, not in the repo).
 - Runs `bun install` so lint and tests can run on your machine.
 
 ## What runs while you work
@@ -47,6 +48,7 @@ and offers to open a pull request when you say you are done.
 | Before a migration file is created or edited | Backs up the SQLite databases again. |
 | Every edit | Records the file for the end-of-turn checks. |
 | Claude finishes a turn | Lints and tests the files it touched. Refuses to stop until the work is committed and pushed to your branch. |
+| He asks for the team's latest changes, or the branch is behind `main` | The `sync-main` skill (installed to `~/.claude/skills/`) runs `scripts/sync-main.sh`: backup, renumber clashing local migration files (fixing the `schema_migrations` rows so nothing re-runs), merge `origin/main`, restart the app. If the app does not come back, it restores the backup and undoes the merge. |
 | Any shell command | Blocks pushes to `main` or `dev`, force pushes, history rewrites, branch deletion, `gh pr merge`, `gh pr review`, and destructive Docker or `rm` commands. |
 
 Backups contain only the `.sqlite` files (metadata, per-user databases,

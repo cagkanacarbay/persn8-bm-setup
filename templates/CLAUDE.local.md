@@ -33,9 +33,11 @@ branch, commit, push, pull request. Skip anything deeper.
   `git branch -m bm/<date>-<slug>`.
 - When I start something unrelated to the current branch, run `new-work.sh`
   again with a new slug. One piece of work per branch.
-- If the branch is behind `main`, merge `origin/main` in before continuing:
-  `git fetch origin main && git merge origin/main`. Never rebase. If the merge
-  conflicts and you cannot resolve it safely, stop and tell me to message Cha.
+- If the branch is behind `main`, or I ask for the team's latest changes, use
+  the `sync-main` skill. It runs `__SETUP_DIR__/scripts/sync-main.sh`, which
+  backs up my data, merges `origin/main`, and restarts the app. Never rebase.
+  If it reports a conflict you cannot resolve safely, `git merge --abort` and
+  tell me to message Cha.
 
 ## Saving work
 
