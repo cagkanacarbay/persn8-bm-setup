@@ -1,0 +1,142 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(git push:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git stash:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git rev-list:*)",
+      "Bash(git remote:*)",
+      "Bash(bun install:*)",
+      "Bash(bun test:*)",
+      "Bash(bun run:*)",
+      "Bash(bunx eslint:*)",
+      "Bash(bunx tsc:*)",
+      "Bash(bunx prettier:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker info:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh auth status:*)",
+      "Bash(curl:*)",
+      "Bash(open:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(__SETUP_DIR__/scripts/:*)"
+    ],
+    "deny": [
+      "Bash(git push origin main:*)",
+      "Bash(git push origin dev:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(git rebase:*)",
+      "Bash(git checkout main:*)",
+      "Bash(git checkout dev:*)",
+      "Bash(git switch main:*)",
+      "Bash(git switch dev:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr review:*)",
+      "Bash(gh repo delete:*)",
+      "Bash(rm -rf:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker volume rm:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"__SETUP_DIR__/hooks/session-start.sh\"",
+            "timeout": 120,
+            "statusMessage": "Backing up databases, checking branch, starting the app..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"__SETUP_DIR__/hooks/prompt-context.sh\"",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"__SETUP_DIR__/hooks/deny-dangerous.sh\"",
+            "statusMessage": "Checking command safety..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"__SETUP_DIR__/hooks/backup-before-migration.sh\"",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"__SETUP_DIR__/hooks/backup-before-migration.sh\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"__SETUP_DIR__/hooks/track-edit.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"__SETUP_DIR__/hooks/on-stop.py\"",
+            "timeout": 300,
+            "statusMessage": "Running lint and tests, checking that work is saved..."
+          }
+        ]
+      }
+    ]
+  }
+}
